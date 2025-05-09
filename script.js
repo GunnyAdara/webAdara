@@ -1,6 +1,54 @@
 // --- Constantes y Estado Global ---
 // SE ELIMINARON: impactChartInstance, simulatedImpactData, TARGET_*, COST_PER_RESIDENT_*
 
+const programDetails = {
+    'internamiento': {
+        title: 'Programa de Internamiento Completo',
+        icon: 'fas fa-house-user',
+        description: 'Modalidad residencial intensiva (24/7) diseñada para personas con adicciones severas que requieren un ambiente controlado y seguro para iniciar su recuperación. Los participantes se sumergen en una comunidad terapéutica con estructura y apoyo constantes.',
+        features: [
+            { icon: 'fas fa-shield-alt', text: '<strong>Ambiente Seguro:</strong> Entorno estrictamente libre de sustancias, con normas claras.' },
+            { icon: 'fas fa-bed', text: '<strong>Alojamiento y Nutrición:</strong> Residencia confortable y alimentación balanceada.' },
+            { icon: 'fas fa-user-md', text: '<strong>Atención Médica y Desintoxicación:</strong> Supervisión médica, manejo de medicamentos y fase inicial de desintoxicación (3-7 días).' },
+            { icon: 'fas fa-brain', text: '<strong>Terapia Psicológica Individual:</strong> Abordaje de causas subyacentes, traumas y desarrollo de habilidades de afrontamiento.' },
+            { icon: 'fas fa-users', text: '<strong>Terapias Grupales Intensivas:</strong> Grupos de proceso, psicoeducativos y basados en los 12 Pasos.' },
+            { icon: 'fas fa-tasks', text: '<strong>Actividades Terapéuticas y Formativas:</strong> Talleres de habilidades para la vida, manejo emocional, prevención de recaídas, recreación.' },
+            { icon: 'fas fa-user-clock', text: '<strong>Supervisión Constante:</strong> Acompañamiento del personal y apoyo de pares.' }
+        ],
+        duration: 'Mínimo 4 meses continuos (recomendado), extensible según evaluación terapéutica individual.',
+        idealFor: 'Quienes necesitan máxima estructura y apoyo para interrumpir el consumo y construir bases sólidas de recuperación.'
+    },
+    'mediaLuz': {
+        title: 'Programa de Media Luz',
+        icon: 'fas fa-key',
+        description: 'Etapa de transición flexible que facilita la reintegración gradual a la vida autónoma. Permite a los participantes con mayor estabilidad manejar responsabilidades externas (trabajo, estudio) mientras pernoctan en la Fundación y continúan recibiendo apoyo.',
+        features: [
+            { icon: 'fas fa-briefcase', text: '<strong>Actividades Externas:</strong> Permiso para trabajar, estudiar, voluntariado o contacto familiar supervisado.' },
+            { icon: 'fas fa-home', text: '<strong>Residencia Estructurada:</strong> Alojamiento y apoyo nocturno/fines de semana en la Fundación.' },
+            { icon: 'fas fa-comments', text: '<strong>Apoyo Continuo:</strong> Acceso a terapias individuales/grupales, orientación y contención.' },
+            { icon: 'fas fa-user-friends', text: '<strong>Comunidad y Servicio:</strong> Fomenta la participación comunitaria y el apoyo a nuevos ingresos.' },
+            { icon: 'fas fa-route', text: '<strong>Reintegración Supervisada:</strong> Permite practicar habilidades en entorno real con red de seguridad.' }
+        ],
+        duration: 'Variable, adaptada al progreso individual en objetivos de reinserción y evaluación terapéutica.',
+        idealFor: 'Quienes han completado el internamiento inicial y están listos para una reintegración gradual, o quienes necesitan apoyo residencial pero pueden manejar responsabilidades externas.'
+    },
+    'grupales': {
+        title: 'Terapias Grupales (Tipo AA y otras)',
+        icon: 'fas fa-users',
+        description: 'Pilar fundamental y transversal en todos los programas, reconociendo el poder de la experiencia compartida y el apoyo mutuo. Disponibles también de forma ambulatoria para seguimiento post-tratamiento o apoyo comunitario.',
+        features: [
+            { icon: 'fas fa-handshake', text: '<strong>Apoyo Mutuo:</strong> Basadas en principios de 12 Pasos (AA/NA) y otros enfoques, enfatizando honestidad y respeto.' },
+            { icon: 'fas fa-book-open', text: '<strong>Aprendizaje Compartido:</strong> Espacio seguro para compartir luchas/éxitos, identificar patrones y aprender estrategias.' },
+            { icon: 'fas fa-comment-dots', text: '<strong>Romper Aislamiento:</strong> Ayuda a disminuir la vergüenza y soledad asociadas a la adicción.' },
+            { icon: 'fas fa-heart', text: '<strong>Pertenencia y Comunidad:</strong> Fortalece el sentido de comunidad, vital para la recuperación a largo plazo.' },
+            { icon: 'fas fa-chalkboard-teacher', text: '<strong>Grupos Profesionales:</strong> Pueden incluir sesiones psicoeducativas dirigidas por terapeutas (manejo emociones, etc.).' }
+        ],
+        duration: 'Participación continua y flexible según la necesidad individual en diferentes etapas de la recuperación.',
+        idealFor: 'Todos los participantes de programas residenciales, ex-beneficiarios en seguimiento, y personas de la comunidad buscando apoyo grupal para su recuperación.'
+    }
+};
+
+
 // --- Funciones de Ayuda (Helpers) ---
 
 /**
@@ -63,6 +111,11 @@ function openPopup(popupId, reason = null) {
     popup.style.display = 'flex';
     requestAnimationFrame(() => { // Asegura que el display flex se aplique antes de la transición
         popup.classList.add('active');
+        // Scroll al inicio del contenido del popup por si es largo
+        const popupContent = popup.querySelector('.popup-content');
+        if (popupContent) {
+            popupContent.scrollTop = 0;
+        }
     });
     document.body.style.overflow = 'hidden'; // Evitar scroll del fondo
     // console.log(`Popup #${popupId} opened. Reason: ${reason}`);
@@ -80,11 +133,11 @@ function openPopup(popupId, reason = null) {
                  } else {
                     // Lógica de fallback mejorada
                     const defaultOption = reasonSelect.querySelector('option[value="Consulta General"]');
-                    const infoOption = reasonSelect.querySelector('option[value="info_programs"]');
+                    const infoOption = reasonSelect.querySelector('option[value="Información sobre programas"]'); // Corregido valor
                     if(defaultOption && reason === 'Consulta General') {
                          reasonSelect.value = "Consulta General";
                     } else if (infoOption && reason.toLowerCase().includes("programa")) {
-                         reasonSelect.value = 'info_programs';
+                         reasonSelect.value = 'Información sobre programas'; // Usar el valor correcto
                     } else if (reasonSelect.querySelector(`option[value="${reason}"]`)) {
                          reasonSelect.value = reason;
                     } else if (defaultOption) {
@@ -125,11 +178,17 @@ function closePopup(popupId) {
             popup.style.display = 'none';
             if (popupId === 'videoPopup') {
                 const iframe = document.getElementById('videoPopupIframe');
-                if (iframe) iframe.src = '';
+                if (iframe) iframe.src = ''; // Detiene el video de YouTube
             }
             if (popupId === 'imagePopup') {
                  const img = document.getElementById('imagePopupImg');
-                 if (img) img.src = '';
+                 if (img) img.src = ''; // Limpia la imagen
+            }
+            // Si es el popup de programas, podríamos limpiar el contenido por si acaso
+            if (popupId === 'programPopup') {
+                 const contentArea = document.getElementById('programPopupContentArea');
+                 // Podrías limpiar aquí si prefieres, aunque se sobreescribe al abrir
+                 // contentArea.innerHTML = '<p>Cargando...</p>';
             }
             // Solo restaurar el scroll si no hay OTRO popup activo
             const anyPopupActive = document.querySelector('.popup.active');
@@ -146,7 +205,7 @@ function openVideoPopup(youtubeId) {
     const iframe = document.getElementById('videoPopupIframe');
     if (!popup || !iframe) { console.error("Video popup or iframe not found."); return; }
     // Usar el formato embed correcto para YouTube
-    const videoSrc = `https://www.youtube.com/embed/$${youtubeId}?autoplay=1&rel=0&modestbranding=1`;
+    const videoSrc = `https://www.youtube.com/embed/${youtubeId}?autoplay=1&rel=0&modestbranding=1`; // CORREGIDO
     iframe.src = videoSrc;
     openPopup('videoPopup');
     setTimeout(() => { try { iframe.focus(); } catch(e){ console.warn("Could not focus video iframe"); } }, 150);
@@ -182,6 +241,78 @@ function initializePopupClosers() {
     // console.log("Global popup close listeners initialized.");
 }
 
+/**
+ * Abre el popup genérico de programas y carga el contenido específico.
+ * @param {string} programId - Identificador del programa ('internamiento', 'mediaLuz', 'grupales').
+ */
+function openProgramPopup(programId) {
+    const details = programDetails[programId];
+    const popup = document.getElementById('programPopup');
+
+    if (!details || !popup) {
+        console.error(`Detalles para el programa "${programId}" o popup #programPopup no encontrado.`);
+        return;
+    }
+
+    // Poblar el contenido del popup (Elementos del DOM)
+    const titleEl = document.getElementById('programPopupTitle');
+    const iconEl = document.getElementById('programPopupIcon');
+    const descEl = document.getElementById('programPopupDescription');
+    const featuresListEl = document.getElementById('programPopupFeaturesList');
+    const durationTextEl = document.getElementById('programPopupDurationText');
+    const idealForTextEl = document.getElementById('programPopupIdealForText');
+    const featuresContainer = document.getElementById('programPopupFeatures');
+    const durationContainer = document.getElementById('programPopupDuration');
+    const idealForContainer = document.getElementById('programPopupIdealFor');
+
+    // Validar que todos los elementos existan antes de intentar usarlos
+    if (!titleEl || !iconEl || !descEl || !featuresListEl || !durationTextEl || !idealForTextEl || !featuresContainer || !durationContainer || !idealForContainer) {
+        console.error("Uno o más elementos internos del popup #programPopup no fueron encontrados.");
+        return;
+    }
+
+    // Asignar contenido
+    titleEl.textContent = details.title;
+    iconEl.className = `mr-3 text-3xl ${details.icon}`; // Asegúrate que la clase base de FontAwesome (e.g., 'fas') esté incluida
+    descEl.innerHTML = details.description; // innerHTML permite usar <strong> u otras etiquetas si las pones en la descripción
+
+    // Limpiar y poblar lista de características
+    featuresListEl.innerHTML = ''; // Limpiar lista anterior
+    if (details.features && details.features.length > 0) {
+         details.features.forEach(feature => {
+             const li = document.createElement('li');
+             li.className = 'flex items-start text-sm text-gray-600';
+             // Usar 'fa-fw' para ancho fijo y mejorar alineación de iconos
+             li.innerHTML = `<i class="${feature.icon} fa-fw text-adara-secondary mr-2 mt-1" aria-hidden="true"></i> <span>${feature.text}</span>`; // innerHTML permite <strong>
+             featuresListEl.appendChild(li);
+         });
+        featuresContainer.style.display = 'block'; // Mostrar contenedor de características
+    } else {
+        featuresContainer.style.display = 'none'; // Ocultar si no hay características
+    }
+
+    // Mostrar/ocultar y poblar duración
+    if (details.duration) {
+        durationTextEl.textContent = details.duration;
+        durationContainer.style.display = 'block';
+    } else {
+        durationContainer.style.display = 'none';
+    }
+
+    // Mostrar/ocultar y poblar 'ideal para'
+     if (details.idealFor) {
+        idealForTextEl.textContent = details.idealFor;
+        idealForContainer.style.display = 'block';
+    } else {
+        idealForContainer.style.display = 'none';
+    }
+
+
+    // Abrir el popup genérico
+    openPopup('programPopup');
+}
+
+// --- FIN PARTE 1 NUEVO CÓDIGO ---
 
 // --- Menú Móvil ---
 function initializeMobileMenu() {
@@ -344,7 +475,6 @@ function initializeVideoCarousel() {
     // console.log("Video carousel initialized.");
 }
 
-// --- FIN PARTE 1 ---
 // --- Lógica de Sucursales y Mapa (Sección Contacto) ---
 const sucursalesData = {
     cancun: { direccion: "Av. López Portillo Mza. 18 Lote. 11, Región 91. Cancún, Quintana Roo, C.P. 77516", mapUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3721.338786611574!2d-86.84976368450511!3d21.13876298593874!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8f4c2efe1ee75e4d%3A0x2d4e7fcb6ff61b91!2sFundacion%20Adara!5e0!3m2!1ses!2smx!4v1678886609634!5m2!1ses!2smx", nombre: "Cancún" },
@@ -373,6 +503,8 @@ function showBranchInfo(branchKey) {
          console.warn("Elementos para mostrar información de sucursal no encontrados.");
     }
 }
+
+// --- FIN PARTE 2a ---
 
 // --- Lógica de Formularios ---
 const donationImpacts = {
@@ -503,7 +635,7 @@ function setupFormEventListeners(formContainerSelector, formType) {
         const submitButton = form.querySelector('button[type="submit"]');
         const spinner = submitButton ? submitButton.querySelector('.spinner') : null;
         let isHelpForm = form.id === 'leadForm';
-        let submissionUrl = isHelpForm ? 'https://formsubmit.co/info@somosadara.org' : '#';
+        let submissionUrl = isHelpForm ? 'https://formsubmit.co/info@somosadara.org' : '#'; // Usa tu email de FormSubmit
 
         if (submitButton) {
             submitButton.classList.add('is-loading');
@@ -548,7 +680,10 @@ function setupFormEventListeners(formContainerSelector, formType) {
             });
         } else {
             // Simulación para otros formularios (Donación popup)
+            // AQUÍ DEBERÍA IR LA LÓGICA REAL DE PROCESAMIENTO DE PAGO (STRIPE, PAYPAL, ETC.)
+            // Por ahora, simulamos éxito.
             console.log(`Simulating submission for form (${form.id || 'N/A'}), type: ${formType}`);
+            console.log('Form Data (Simulated):', Object.fromEntries(formData.entries()));
             setTimeout(() => {
                 handleFormSuccess(form, formType);
                 if (submitButton) {
@@ -564,13 +699,16 @@ function setupFormEventListeners(formContainerSelector, formType) {
     function handleFormSuccess(formElement, formType) {
         let statusContainerId = null;
         let successMessage = '¡Formulario enviado con éxito!';
-        if (formElement.closest('#popupDonateFormContainer')) statusContainerId = 'popupDonationFormStatus';
-        else if (formElement.closest('#popupHelpFormContainer')) statusContainerId = 'popupHelpFormStatus';
+        // Busca el contenedor de estado DENTRO del popup padre del formulario
+        const parentPopup = formElement.closest('.popup');
+        const statusContainer = parentPopup ? parentPopup.querySelector('[id$="FormStatus"]') : null;
+
         if (formType === 'help') successMessage = '¡Mensaje enviado! Nos pondremos en contacto pronto.';
         else if (formType === 'donation') successMessage = '¡Donación procesada! (Simulación) ¡Gracias!';
-        if (statusContainerId && document.getElementById(statusContainerId)) { showStatusMessage(statusContainerId, successMessage, 'success'); }
-        else { alert(successMessage); }
-        const parentPopup = formElement.closest('.popup.active');
+
+        if (statusContainer) { showStatusMessage(statusContainer.id, successMessage, 'success'); }
+        else { alert(successMessage); } // Fallback si no hay contenedor de estado
+
         if (parentPopup) { setTimeout(() => { if (parentPopup.classList.contains('active')) { closePopup(parentPopup.id); } }, 2500); }
         formElement.reset();
         if (formType === 'donation') resetDonationFormUI(formElement);
@@ -578,14 +716,15 @@ function setupFormEventListeners(formContainerSelector, formType) {
     }
 
     function handleFormError(formElement, errorMessage) {
-         let statusContainerId = null;
-         if (formElement.closest('#popupDonateFormContainer')) statusContainerId = 'popupDonationFormStatus';
-         else if (formElement.closest('#popupHelpFormContainer')) statusContainerId = 'popupHelpFormStatus';
-         if (statusContainerId && document.getElementById(statusContainerId)) { showStatusMessage(statusContainerId, errorMessage, 'error'); }
+         const parentPopup = formElement.closest('.popup');
+         const statusContainer = parentPopup ? parentPopup.querySelector('[id$="FormStatus"]') : null;
+
+         if (statusContainer) { showStatusMessage(statusContainer.id, errorMessage, 'error'); }
          else { alert(errorMessage); }
     }
 
     function resetDonationFormUI(formElement) {
+        // Resetea el formulario de donación a su estado inicial
         const defaultAmountOption = formElement.querySelector('.amount-option[data-amount="500"]');
         const monthlyTab = formElement.querySelector('.donate_tab[data-type="monthly"]');
         const customAmountDiv = formElement.querySelector('.custom-amount');
@@ -605,24 +744,41 @@ function setupFormEventListeners(formContainerSelector, formType) {
         if (impactDisplayArea) impactDisplayArea.innerHTML = getImpactHtml('500');
         if (submitBtnAmountSpan) submitBtnAmountSpan.textContent = formatCurrency('500');
         if (submitBtnTypeTextSpan) submitBtnTypeTextSpan.textContent = 'Mensual';
+        // Restablecer la selección del método de pago al predeterminado (tarjeta)
+        const cardRadio = formElement.querySelector('input[name="payment_method"][value="card"]');
+        if (cardRadio) cardRadio.checked = true;
+         // Actualizar visualmente los métodos de pago
+         formElement.querySelectorAll('.payment-method').forEach(label => {
+            const input = label.querySelector('input[type="radio"]');
+            if (input && input.value === 'card') {
+                label.classList.add('has-[:checked]'); // Simular el estado checked si CSS depende de ello
+            } else {
+                label.classList.remove('has-[:checked]');
+            }
+        });
     }
 } // Fin de setupFormEventListeners
 
 
 function initializeForms() {
-    // const mainDonationFormContainer = document.getElementById('donationFormContainer'); // Ya no existe
+    // Contenedores para los formularios en los popups
     const popupDonateFormContainer = document.getElementById('popupDonateFormContainer');
     const popupHelpFormContainer = document.getElementById('popupHelpFormContainer');
 
-    // Donation form in popup
+    // Generar y configurar formulario de Donación en su popup
     if (popupDonateFormContainer && !popupDonateFormContainer.querySelector('form')) {
-        popupDonateFormContainer.innerHTML = createDonationForm('popupDonation');
+        popupDonateFormContainer.innerHTML = createDonationForm('popupDonation'); // Usar prefijo 'popupDonation'
         setupFormEventListeners('#popupDonateFormContainer', 'donation');
+    } else if (!popupDonateFormContainer) {
+         console.warn("#popupDonateFormContainer not found. Donation popup form not initialized.");
     }
-    // Help form in popup
+
+    // Generar y configurar formulario de Ayuda en su popup
     if (popupHelpFormContainer && !popupHelpFormContainer.querySelector('form')) {
-        popupHelpFormContainer.innerHTML = createHelpForm('popupHelp');
-        setupFormEventListeners('#popupHelpFormContainer', 'help'); // El tipo 'help' activa FormSubmit
+        popupHelpFormContainer.innerHTML = createHelpForm('popupHelp'); // No necesita prefijo, ya usa IDs 'lead...'
+        setupFormEventListeners('#popupHelpFormContainer', 'help'); // Tipo 'help' activa FormSubmit
+    } else if (!popupHelpFormContainer) {
+        console.warn("#popupHelpFormContainer not found. Help popup form not initialized.");
     }
 }
 
@@ -634,13 +790,27 @@ function initializeNewDonationWidget(triggerId, dropdownId) {
     const paymentOptionLinks = paymentOptionsDropdown.querySelectorAll('.payment-option');
     mainDonateButton.addEventListener('click', function (event) {
         event.stopPropagation();
-        document.querySelectorAll('.donaciones-widget-container .origin-top-right:not(.hidden)').forEach(openDropdown => { if (openDropdown.id !== dropdownId) { openDropdown.classList.add('hidden'); const otherTriggerId = openDropdown.getAttribute('aria-labelledby'); if (otherTriggerId) { const otherTrigger = document.getElementById(otherTriggerId); if (otherTrigger) otherTrigger.setAttribute('aria-expanded', 'false'); } } });
+        // Ocultar otros dropdowns abiertos del mismo tipo
+        document.querySelectorAll('.donaciones-widget-container .origin-top-right:not(.hidden), .donaciones-widget-container .origin-top-center:not(.hidden)').forEach(openDropdown => {
+             if (openDropdown.id !== dropdownId) {
+                 openDropdown.classList.add('hidden');
+                 const otherTriggerId = openDropdown.getAttribute('aria-labelledby');
+                 if (otherTriggerId) {
+                     const otherTrigger = document.getElementById(otherTriggerId);
+                     if (otherTrigger) otherTrigger.setAttribute('aria-expanded', 'false');
+                 }
+             }
+         });
         const isHidden = paymentOptionsDropdown.classList.contains('hidden'); paymentOptionsDropdown.classList.toggle('hidden', !isHidden); mainDonateButton.setAttribute('aria-expanded', String(!isHidden));
         if (!isHidden) { const firstLink = paymentOptionsDropdown.querySelector('a[role="menuitem"]'); if (firstLink) firstLink.focus(); else paymentOptionsDropdown.focus(); }
     });
+    // Cerrar dropdown si se hace clic fuera
     document.addEventListener('click', function (event) { if (!paymentOptionsDropdown.classList.contains('hidden') && !mainDonateButton.contains(event.target) && !paymentOptionsDropdown.contains(event.target)) { paymentOptionsDropdown.classList.add('hidden'); mainDonateButton.setAttribute('aria-expanded', 'false'); } });
+    // Navegación con teclado y cierre con Escape
     paymentOptionsDropdown.addEventListener('keydown', function(event) { if (event.key === 'Escape') { paymentOptionsDropdown.classList.add('hidden'); mainDonateButton.setAttribute('aria-expanded', 'false'); mainDonateButton.focus(); } if (event.key === 'ArrowDown' || event.key === 'ArrowUp') { event.preventDefault(); const items = Array.from(paymentOptionsDropdown.querySelectorAll('a[role="menuitem"]')); let currentIndex = items.indexOf(document.activeElement); if (event.key === 'ArrowDown') currentIndex = (currentIndex + 1) % items.length; else currentIndex = (currentIndex - 1 + items.length) % items.length; if (items[currentIndex]) items[currentIndex].focus(); } });
+    // Función para abrir enlaces externos en un popup centrado
     function openExternalLinkPopup(url) { const popupWidth = 800, popupHeight = 650; const left = (window.screen.width / 2) - (popupWidth / 2); const top = (window.screen.height / 2) - (popupHeight / 2); const safeWidth = Math.min(popupWidth, window.screen.availWidth); const safeHeight = Math.min(popupHeight, window.screen.availHeight); const safeLeft = Math.max(0, left); const safeTop = Math.max(0, top); window.open(url, 'DonationPopup', `width=${safeWidth},height=${safeHeight},top=${safeTop},left=${safeLeft},scrollbars=yes,resizable=yes,status=yes,toolbar=no,menubar=no,location=yes`); }
+    // Acción al hacer clic en las opciones de pago
     paymentOptionLinks.forEach(option => { option.addEventListener('click', function (event) { event.preventDefault(); const paymentMethod = this.dataset.paymentMethod; paymentOptionsDropdown.classList.add('hidden'); mainDonateButton.setAttribute('aria-expanded', 'false'); mainDonateButton.focus(); if (paymentMethod === 'paypal') openExternalLinkPopup('https://www.paypal.com/donate/?hosted_button_id=E44UUTB6DFN2A'); else if (paymentMethod === 'stripe') openExternalLinkPopup('https://donate.stripe.com/6oEcP55JweTTdZCfYY'); }); });
 }
 // --- Fin: Nuevo Widget de Donación PayPal/Stripe ---
@@ -649,17 +819,33 @@ function initializeNewDonationWidget(triggerId, dropdownId) {
 document.addEventListener('DOMContentLoaded', () => {
     const yearSpan = document.getElementById('currentYear'); if (yearSpan) { yearSpan.textContent = new Date().getFullYear(); }
     const openHelpPopupBtnHeader = document.getElementById('openHelpPopupBtnHeader'); if (openHelpPopupBtnHeader) { openHelpPopupBtnHeader.addEventListener('click', () => openPopup('helpPopup', 'Consulta General')); }
-    initializeMobileMenu(); initializeScrollReveal(); initializeVideoCarousel(); initializePopupClosers(); initializeForms();
-    initializeNewDonationWidget('headerDonateTrigger', 'headerDonateDropdown'); initializeNewDonationWidget('mobileDonateTrigger', 'mobileDonateDropdown'); initializeNewDonationWidget('heroDonateTrigger', 'heroDonateDropdown'); initializeNewDonationWidget('howToHelpDonateTrigger', 'howToHelpDonateDropdown');
-    const branchButtons = document.querySelectorAll('.branch-buttons button'); branchButtons.forEach(button => button.addEventListener('click', () => showBranchInfo(button.dataset.branch))); if (document.getElementById('branchAddress')) showBranchInfo('cancun');
+
+    // Inicializar todas las funcionalidades
+    initializeMobileMenu();
+    initializeScrollReveal();
+    initializeVideoCarousel();
+    initializePopupClosers(); // Configura cierres globales para todos los popups
+    initializeForms(); // Genera y configura formularios en popups
+
+    // Inicializar todos los widgets de donación
+    initializeNewDonationWidget('headerDonateTrigger', 'headerDonateDropdown');
+    initializeNewDonationWidget('mobileDonateTrigger', 'mobileDonateDropdown');
+    initializeNewDonationWidget('heroDonateTrigger', 'heroDonateDropdown');
+    initializeNewDonationWidget('howToHelpDonateTrigger', 'howToHelpDonateDropdown');
+
+    // Inicializar lógica de sucursales
+    const branchButtons = document.querySelectorAll('.branch-buttons button');
+    branchButtons.forEach(button => button.addEventListener('click', () => showBranchInfo(button.dataset.branch)));
+    if (document.getElementById('branchAddress')) {
+         showBranchInfo('cancun'); // Mostrar Cancún por defecto
+     }
 
     // --- Código Gráfica de Impacto ---
     try {
         const chartCanvas = document.getElementById('adaraChart');
-        if (!chartCanvas) { /* console.warn(...) */ }
+        if (!chartCanvas) { console.warn("Elemento canvas #adaraChart no encontrado. Gráfica no inicializada.") }
         else {
-            // (Código completo de la gráfica, como en la versión anterior, va aquí)
-            // ... (Inicio Código Gráfica) ...
+            // (Inicio Código Gráfica - Mantenido como antes)
             const labels = ["2021-06", "2021-07", "2021-08", "2021-09", "2021-10", "2021-11", "2021-12", "2022-01", "2022-02", "2022-03", "2022-04", "2022-05", "2022-06", "2022-07", "2022-08", "2022-09", "2022-10", "2022-11", "2022-12", "2023-01", "2023-02", "2023-03", "2023-04", "2023-05", "2023-06", "2023-07", "2023-08", "2023-09", "2023-10", "2023-11", "2023-12", "2024-01", "2024-02", "2024-03", "2024-04", "2024-05", "2024-06", "2024-07", "2024-08", "2024-09", "2024-10", "2024-11", "2024-12", "2025-01", "2025-02", "2025-03", "2025-04", "2025-05"]; const monthNamesEs = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"]; const parseCurrencyPDF = (value) => parseFloat(String(value).replace(/[\$,]/g, '')) || 0; const datasetsFromPDF = { nuevosIngresosOrganicosMes: [3, 12, 19, 24, 20, 7, 3, 11, 12, 8, 5, 7, 6, 4, 4, 6, 4, 9, 5, 12, 7, 11, 9, 9, 8, 11, 4, 11, 8, 14, 11, 12, 9, 35, 20, 9, 12, 9, 9, 11, 11, 9, 18, 24, 26, 29, 23, 20], recaidasIngresosMes: [0, 0, 1, 3, 5, 2, 7, 4, 9, 7, 6, 4, 9, 3, 9, 4, 11, 2, 11, 2, 3, 4, 4, 4, 5, 3, 5, 4, 12, 12, 7, 7, 7, 18, 12, 5, 9, 8, 6, 10, 9, 11, 11, 12, 12, 13, 9, 9], personasActivasMes: [3, 14, 32, 54, 71, 74, 75, 76, 76, 73, 75, 72, 76, 74, 74, 69, 78, 75, 75, 77, 78, 79, 73, 77, 76, 78, 78, 79, 77, 78, 76, 80, 78, 112, 132, 126, 133, 134, 133, 133, 135, 133, 135, 119, 137, 154, 166, 173], inversionMes: [53500, 103000, 184000, 283000, 359500, 373000, 377500, 382000, 382000, 368500, 377500, 364000, 382000, 373000, 373000, 350500, 391000, 377500, 377500, 386500, 391000, 395500, 368500, 386500, 382000, 391000, 391000, 395500, 386500, 391000, 382000, 400000, 375400, 432000, 502000, 481000, 505500, 509000, 505500, 505500, 512500, 505500, 607500, 397500, 442500, 485000, 515000, 532500].map(parseCurrencyPDF), inversionTotalAcum: [53500, 156500, 340500, 623500, 983000, 1356000, 1733500, 2115500, 2497500, 2866000, 3243500, 3607500, 3989500, 4362500, 4735500, 5086000, 5477000, 5854500, 6232000, 6618500, 7009500, 7405000, 7773500, 8160000, 8542000, 8933000, 9324000, 9719500, 10106000, 10497000, 10879000, 11279000, 11654400, 12086400, 12588400, 13069400, 13574900, 14083900, 14589400, 15094900, 15607400, 16112900, 16720400, 17117900, 17560400, 18045400, 18560400, 19092900].map(parseCurrencyPDF), c1Activos: [3, 14, 32, 54, 71, 74, 75, 76, 76, 73, 75, 72, 76, 74, 74, 69, 78, 75, 75, 77, 78, 79, 73, 77, 76, 78, 78, 79, 77, 78, 76, 80, 78, 75, 73, 70, 75, 72, 67, 73, 70, 74, 75, 74, 72, 70, 75, 73], c2Activos: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 59, 56, 58, 62, 66, 60, 65, 59, 53, 0, 0, 0, 0, 0], c3Activos: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 0, 0, 0, 0, 0, 0, 0, 0, 10, 45, 65, 84, 91, 100], apoyosBrindadosAcum: [], };
             let currentApoyosSum = 0; for (let i = 0; i < labels.length; i++) { currentApoyosSum += (datasetsFromPDF.nuevosIngresosOrganicosMes[i] || 0) + (datasetsFromPDF.recaidasIngresosMes[i] || 0); datasetsFromPDF.apoyosBrindadosAcum.push(currentApoyosSum); }
             const clinicEvents = { "2021-06": "Apertura Clínica Cancún", "2023-05": "Constitución Legal Fundación Adara", "2024-02": "Permiso Donataria Autorizada", "2024-03": "Apertura Clínica Cuernavaca", "2024-12": "Apertura Clínica Leona Vicario", "2025-01": "Cierre Clínica Cuernavaca" };
@@ -672,7 +858,7 @@ document.addEventListener('DOMContentLoaded', () => {
             function updateChartDisplay() { const selectedDatasets = []; document.querySelectorAll('#controls input[type="checkbox"]').forEach(checkbox => { const datasetKey = checkbox.dataset.dataset; if (checkbox.checked && datasetsConfig[datasetKey]) selectedDatasets.push(datasetsConfig[datasetKey]); }); adaraChart.data.datasets = selectedDatasets; let yCountsNeeded = selectedDatasets.some(ds => ds.yAxisID === 'yCounts'); let yCurrencyNeeded = selectedDatasets.some(ds => ds.yAxisID === 'yCurrency'); if (adaraChart.options.scales.yCounts) adaraChart.options.scales.yCounts.display = yCountsNeeded; if (adaraChart.options.scales.yCurrency) adaraChart.options.scales.yCurrency.display = yCurrencyNeeded; adaraChart.update(); }
             document.querySelectorAll('#controls input[type="checkbox"]').forEach(checkbox => checkbox.addEventListener('change', updateChartDisplay));
             updateChartDisplay(); updateKpiCards(labels.length - 1);
-            // ... (Fin Código Gráfica) ...
+            // (Fin Código Gráfica)
         }
     } catch (error) {
         console.error("Error inicializando la nueva sección de impacto:", error);
