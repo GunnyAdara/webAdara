@@ -89,10 +89,29 @@
                         <button id="openHelpPopupBtnHeader" class="btn btn-primary-solid">
                             <span class="emoji-icon" role="img" aria-label="Manos rezando">🙏</span> Pide Ayuda
                         </button>
-                        <button id="openDonatePopupBtnHeader" class="btn btn-accent">
-                            Donar <span class="emoji-icon-end" role="img" aria-label="Corazón con lazo">💝</span>
-                        </button>
-                    </div>
+                        <div class="donaciones-widget-container relative inline-block text-left">
+                            <button id="headerDonateTrigger" type="button" class="btn btn-accent inline-flex items-center justify-center" aria-haspopup="true" aria-expanded="false">
+                                <span class="emoji-icon" role="img" aria-label="Corazón con lazo">💝</span>
+                                Donar
+                                <svg class="ml-2 -mr-0.5 h-5 w-5 text-gray-700" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                    <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.25 4.25a.75.75 0 01-1.06 0L5.23 8.29a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
+                                </svg>
+                            </button>
+                            <div id="headerDonateDropdown" class="hidden origin-top-right absolute right-0 mt-2 w-64 rounded-md shadow-xl bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50" role="menu" aria-orientation="vertical" aria-labelledby="headerDonateTrigger" tabindex="-1">
+                                <div class="py-1" role="none">
+                                    <p class="px-4 py-2 text-xs text-gray-500">Elige tu método de donación:</p>
+                                    <a href="#" class="payment-option group flex items-center w-full px-4 py-3 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900" role="menuitem" tabindex="-1" data-payment-method="paypal">
+                                        <img src="https://www.paypalobjects.com/webstatic/mktg/Logo/pp-logo-100px.png" alt="PayPal" class="mr-3 h-6 w-auto object-contain">
+                                        Donar con PayPal
+                                    </a>
+                                    <a href="#" class="payment-option group flex items-center w-full px-4 py-3 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900" role="menuitem" tabindex="-1" data-payment-method="stripe">
+                                        <img src="https://stripe.com/img/v3/home/social.png" alt="Stripe" class="mr-3 h-6 w-auto object-contain p-0.5 border border-gray-200 rounded-sm">
+                                        Donar con Tarjeta (Stripe)
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        </div>
                     <div class="lg:hidden ml-3">
                         <button id="mobile-menu-button" class="text-adara-dark hover:text-adara-primary focus:outline-none focus:ring-2 focus:ring-inset focus:ring-adara-secondary p-2 rounded-md" aria-label="Abrir menú de navegación" aria-expanded="false" aria-controls="mobile-menu">
                              <span class="sr-only">Abrir menú principal</span>
@@ -113,10 +132,29 @@
                 <button id="openHelpPopupBtnMobile" class="btn btn-primary-solid w-full justify-center">
                     <span class="emoji-icon" role="img" aria-label="Manos rezando">🙏</span> Pide Ayuda
                 </button>
-                <button id="openDonatePopupBtnMobile" class="btn btn-accent w-full justify-center">
-                    Donar Ahora <span class="emoji-icon-end" role="img" aria-label="Corazón con lazo">💝</span>
-                </button>
-            </div>
+                <div class="donaciones-widget-container relative inline-block text-left w-full">
+                    <button id="mobileDonateTrigger" type="button" class="btn btn-accent w-full justify-center inline-flex items-center" aria-haspopup="true" aria-expanded="false">
+                        <span class="emoji-icon" role="img" aria-label="Corazón con lazo">💝</span>
+                        Donar Ahora
+                        <svg class="ml-2 -mr-0.5 h-5 w-5 text-gray-700" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                            <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.25 4.25a.75.75 0 01-1.06 0L5.23 8.29a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                    <div id="mobileDonateDropdown" class="hidden origin-top-right absolute right-0 mt-2 w-full rounded-md shadow-xl bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50" role="menu" aria-orientation="vertical" aria-labelledby="mobileDonateTrigger" tabindex="-1">
+                        <div class="py-1" role="none">
+                            <p class="px-4 py-2 text-xs text-gray-500">Elige tu método de donación:</p>
+                            <a href="#" class="payment-option group flex items-center w-full px-4 py-3 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900" role="menuitem" tabindex="-1" data-payment-method="paypal">
+                                <img src="https://www.paypalobjects.com/webstatic/mktg/Logo/pp-logo-100px.png" alt="PayPal" class="mr-3 h-6 w-auto object-contain">
+                                Donar con PayPal
+                            </a>
+                            <a href="#" class="payment-option group flex items-center w-full px-4 py-3 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900" role="menuitem" tabindex="-1" data-payment-method="stripe">
+                                <img src="https://stripe.com/img/v3/home/social.png" alt="Stripe" class="mr-3 h-6 w-auto object-contain p-0.5 border border-gray-200 rounded-sm">
+                                Donar con Tarjeta (Stripe)
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                </div>
         </div>
     </header>
 
@@ -133,9 +171,28 @@
                     <span class="block text-base mt-2 opacity-90">- Fausto Ramírez, Fundador</span>
                 </p>
                 <div class="space-y-4 sm:space-y-0 sm:space-x-4">
-                    <button class="btn btn-accent btn-lg" onclick="openPopup('donatePopup')">
-                        <span class="emoji-icon" role="img" aria-label="Corazón con lazo">💝</span> Salva UNA Vida
-                    </button>
+                    <div class="donaciones-widget-container relative inline-block text-left">
+                        <button id="heroDonateTrigger" type="button" class="btn btn-accent btn-lg inline-flex items-center justify-center" aria-haspopup="true" aria-expanded="false">
+                            <span class="emoji-icon" role="img" aria-label="Corazón con lazo">💝</span>
+                            Salva UNA Vida
+                            <svg class="ml-2 -mr-0.5 h-5 w-5 text-gray-700" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.25 4.25a.75.75 0 01-1.06 0L5.23 8.29a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
+                            </svg>
+                        </button>
+                        <div id="heroDonateDropdown" class="hidden origin-top-right absolute left-0 sm:left-auto sm:right-0 mt-2 w-64 rounded-md shadow-xl bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-30" role="menu" aria-orientation="vertical" aria-labelledby="heroDonateTrigger" tabindex="-1">
+                            <div class="py-1" role="none">
+                                <p class="px-4 py-2 text-xs text-gray-500">Elige tu método de donación:</p>
+                                <a href="#" class="payment-option group flex items-center w-full px-4 py-3 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900" role="menuitem" tabindex="-1" data-payment-method="paypal">
+                                    <img src="https://www.paypalobjects.com/webstatic/mktg/Logo/pp-logo-100px.png" alt="PayPal" class="mr-3 h-6 w-auto object-contain">
+                                    Donar con PayPal
+                                </a>
+                                <a href="#" class="payment-option group flex items-center w-full px-4 py-3 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900" role="menuitem" tabindex="-1" data-payment-method="stripe">
+                                    <img src="https://stripe.com/img/v3/home/social.png" alt="Stripe" class="mr-3 h-6 w-auto object-contain p-0.5 border border-gray-200 rounded-sm">
+                                    Donar con Tarjeta (Stripe)
+                                </a>
+                            </div>
+                        </div>
+                    </div>
                     <button class="btn btn-primary-solid btn-lg" onclick="openPopup('helpPopup', 'Consulta General')">
                         <span class="emoji-icon" role="img" aria-label="Mano sosteniendo corazón o similar">🤝</span> Salva TU Vida
                     </button>
@@ -289,24 +346,24 @@
                         <div class="program-icon text-adara-primary" aria-hidden="true"><i class="fas fa-home"></i></div>
                         <h3>Internamiento Completo</h3>
                         <p>Programa residencial 24/7 para adicciones severas (mínimo 4 meses). Incluye desintoxicación supervisada, terapias individuales/grupales, atención médica y talleres para la reinserción.</p>
-                        <button onclick="openPopup('helpPopup', 'Internamiento Completo')" class="btn btn-primary-solid">
-                            Solicitar Información
+                        <button onclick="openProgramPopup('internamiento')" class="btn btn-primary-solid">
+                            Más Información
                         </button>
                     </article>
                     <article class="program-card reveal-on-scroll bg-emerald-50" style="--reveal-delay: 0.2s;">
                         <div class="program-icon text-adara-secondary" aria-hidden="true"><i class="fas fa-moon"></i></div>
                         <h3>Programa de Media Luz</h3>
                         <p>Etapa de transición diseñada para una reintegración social y laboral paulatina. Los beneficiarios pernoctan en la Fundación mientras trabajan o estudian, continuando con apoyo terapéutico.</p>
-                        <button onclick="openPopup('helpPopup', 'Programa Media Luz')" class="btn btn-primary-solid">
-                            Solicitar Información
+                        <button onclick="openProgramPopup('mediaLuz')" class="btn btn-primary-solid">
+                            Más Información
                         </button>
                     </article>
                     <article class="program-card reveal-on-scroll bg-purple-50" style="--reveal-delay: 0.3s;">
                         <div class="program-icon text-adara-success" aria-hidden="true"><i class="fas fa-users"></i></div>
                         <h3>Terapias Grupales</h3>
                         <p>Basadas en los principios de Doce Pasos, apoyo mutuo y manejo de emociones. Son un pilar fundamental de la recuperación, disponibles también en modalidad ambulatoria para seguimiento.</p>
-                        <button onclick="openPopup('helpPopup', 'Terapias Grupales')" class="btn btn-primary-solid">
-                            Solicitar Información
+                        <button onclick="openProgramPopup('grupales')" class="btn btn-primary-solid">
+                            Más Información
                         </button>
                     </article>
                 </div>
@@ -369,45 +426,48 @@
         </section>
 
         <section id="noticias" class="py-16 sm:py-24 bg-white" aria-labelledby="noticias-heading">
-             <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="text-center mb-12 reveal-on-scroll">
-                    <h2 id="noticias-heading" class="text-3xl sm:text-4xl mb-4">Últimas Noticias</h2>
-                    <p class="text-lg text-gray-700 max-w-2xl mx-auto">Mantente al día con nuestras actividades, eventos y artículos de interés.</p>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    <article class="news-card reveal-on-scroll" style="--reveal-delay: 0.1s;">
-                        <img src="https://placehold.co/600x400/00B4D8/FFFFFF?text=Noticia+1" alt="Imagen representativa de la noticia 1" onerror="this.onerror=null; this.src='https://placehold.co/600x400/cccccc/FFFFFF?text=Imagen+Noticia'; this.alt='Placeholder Imagen Noticia';">
-                        <div class="news-card-content">
-                            <p class="news-card-meta"><time datetime="2025-05-01">1 de Mayo, 2025</time></p>
-                            <h3><a href="#" class="hover:text-adara-secondary transition duration-150">Nuevo Taller de Habilidades para la Vida</a></h3>
-                            <p class="news-card-excerpt">Implementamos un nuevo taller enfocado en herramientas prácticas para la reinserción laboral y social...</p>
-                            <a href="#" class="btn btn-primary-outline btn-sm">Leer Más</a>
-                        </div>
-                    </article>
-                    <article class="news-card reveal-on-scroll" style="--reveal-delay: 0.2s;">
-                        <img src="https://placehold.co/600x400/2A9D8F/FFFFFF?text=Noticia+2" alt="Imagen representativa de la noticia 2" onerror="this.onerror=null; this.src='https://placehold.co/600x400/cccccc/FFFFFF?text=Imagen+Noticia'; this.alt='Placeholder Imagen Noticia';">
-                        <div class="news-card-content">
-                            <p class="news-card-meta"><time datetime="2025-04-20">20 de Abril, 2025</time></p>
-                            <h3><a href="#" class="hover:text-adara-secondary transition duration-150">Evento Anual de Recaudación: ¡Gracias!</a></h3>
-                            <p class="news-card-excerpt">Queremos agradecer profundamente a todos los asistentes, voluntarios y donantes que hicieron de nuestro evento...</p>
-                            <a href="#" class="btn btn-primary-outline btn-sm">Leer Más</a>
-                        </div>
-                    </article>
-                    <article class="news-card reveal-on-scroll" style="--reveal-delay: 0.3s;">
-                        <img src="https://placehold.co/600x400/E76F51/FFFFFF?text=Noticia+3" alt="Imagen representativa de la noticia 3" onerror="this.onerror=null; this.src='https://placehold.co/600x400/cccccc/FFFFFF?text=Imagen+Noticia'; this.alt='Placeholder Imagen Noticia';">
-                        <div class="news-card-content">
-                            <p class="news-card-meta"><time datetime="2025-04-05">5 de Abril, 2025</time></p>
-                            <h3><a href="#" class="hover:text-adara-secondary transition duration-150">Importancia del Apoyo Familiar</a></h3>
-                            <p class="news-card-excerpt">Un artículo profundo sobre cómo el acompañamiento y la comprensión familiar son pilares fundamentales...</p>
-                            <a href="#" class="btn btn-primary-outline btn-sm">Leer Más</a>
-                        </div>
-                    </article>
-                </div>
-                 <div class="text-center mt-12 reveal-on-scroll">
-                    <a href="/noticias" class="btn btn-primary-solid">Ver Todas las Noticias</a> </div>
-            </div>
-        </section>
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+               <div class="text-center mb-12 reveal-on-scroll">
+                   <h2 id="noticias-heading" class="text-3xl sm:text-4xl mb-4">Últimas Noticias</h2>
+                   <p class="text-lg text-gray-700 max-w-2xl mx-auto">Mantente al día con nuestras actividades, eventos y logros.</p>
+               </div>
+               <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
 
+                   <article class="news-card reveal-on-scroll" style="--reveal-delay: 0.1s;">
+                       <img src="https://imagizer.imageshack.com/img922/7253/fLmSk5.jpg" alt="Nominación Premio Nobel de la Paz Fausto Ramírez" class="w-full h-48 object-cover" onerror="this.onerror=null; this.src='https://placehold.co/600x400/FFD60A/333333?text=Nobel'; this.alt='Placeholder Imagen Noticia';">
+                       <div class="news-card-content">
+                           <p class="news-card-meta"><time datetime="2025-02-10">10 de febrero, 2025</time></p>
+                           <h3><a href="https://somosadara.blogspot.com/2025/05/premio-nobel-de-la-paz.html" target="_blank" rel="noopener noreferrer" class="hover:text-adara-secondary transition duration-150">Premio Nobel de la Paz.</a></h3>
+                           <p class="news-card-excerpt">¡Gran noticia! ✨ Para el 2025, nuestro fundador Fausto Ramirez ha sido nominado al Premio Nobel de la Paz.</p>
+                           <a href="https://somosadara.blogspot.com/2025/05/premio-nobel-de-la-paz.html" target="_blank" rel="noopener noreferrer" class="btn btn-primary-outline btn-sm">Leer Más</a>
+                       </div>
+                   </article>
+
+                   <article class="news-card reveal-on-scroll" style="--reveal-delay: 0.2s;">
+                       <img src="https://imagizer.imageshack.com/img922/3167/hXWkAv.jpg" alt="Fausto Ramírez Delegado Oficial ante la ONU" class="w-full h-48 object-cover" onerror="this.onerror=null; this.src='https://placehold.co/600x400/0077B6/FFFFFF?text=ONU'; this.alt='Placeholder Imagen Noticia';">
+                       <div class="news-card-content">
+                           <p class="news-card-meta"><time datetime="2025-04-21">21 de abril de 2025</time></p>
+                           <h3><a href="https://somosadara.blogspot.com/2025/05/delegado-oficial-ante-la-onu.html" target="_blank" rel="noopener noreferrer" class="hover:text-adara-secondary transition duration-150">Fausto Ramírez, Delegado Oficial ante la ONU (Turquía 2025)</a></h3>
+                           <p class="news-card-excerpt">Nuestro fundador, Fausto Ramírez, ha sido confirmado como Delegado Oficial de México en la Best Diplomatic Conference de la ONU 2025 en Turquía.</p>
+                           <a href="https://somosadara.blogspot.com/2025/05/delegado-oficial-ante-la-onu.html" target="_blank" rel="noopener noreferrer" class="btn btn-primary-outline btn-sm">Leer Más</a>
+                       </div>
+                   </article>
+
+                   <article class="news-card reveal-on-scroll" style="--reveal-delay: 0.3s;">
+                       <img src="https://imagizer.imageshack.com/img922/641/utIhqX.jpg" alt="Alianza Estratégica Fundación Adara, Fuerza Nacional, CRAADYR y Gobierno Quintana Roo" class="w-full h-48 object-cover" onerror="this.onerror=null; this.src='https://placehold.co/600x400/2A9D8F/FFFFFF?text=Alianza'; this.alt='Placeholder Imagen Noticia';">
+                       <div class="news-card-content">
+                           <p class="news-card-meta"><time datetime="2025-02-21">21 de febrero de 2025</time></p>
+                           <h3><a href="https://somosadara.blogspot.com/2025/05/alianza-historica-en-quintana-roo.html" target="_blank" rel="noopener noreferrer" class="hover:text-adara-secondary transition duration-150">Alianza Histórica por la Salud Mental en Q. Roo</a></h3>
+                           <p class="news-card-excerpt">Se consolida alianza estratégica con Gobierno de Q. Roo y CRAADYR A.C., bajo el movimiento Fuerza Nacional, para dignificar la atención en salud mental y adicciones.</p>
+                           <a href="https://somosadara.blogspot.com/2025/05/alianza-historica-en-quintana-roo.html" target="_blank" rel="noopener noreferrer" class="btn btn-primary-outline btn-sm">Leer Más</a>
+                       </div>
+                   </article>
+
+               </div>
+                <div class="text-center mt-12 reveal-on-scroll">
+                   <a href="https://somosadara.blogspot.com/" target="_blank" rel="noopener noreferrer" class="btn btn-primary-solid">Ver Todas las Noticias</a> </div>
+           </div>
+        </section>
         <section id="como-ayudar" class="py-16 sm:py-24 bg-adara-light" aria-labelledby="como-ayudar-heading">
             <div class="container mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="text-center mb-12 reveal-on-scroll">
@@ -416,17 +476,32 @@
                 </div>
                 <div id="donationFormWrapper" class="reveal-on-scroll" style="--reveal-delay: 0.1s;">
                     <h3 class="text-2xl font-semibold text-adara-success mb-6 text-center font-heading">Haz tu Donación Segura</h3>
-                    <div id="donationFormContainer">
-                         <p class="text-center text-gray-500 italic py-10 border-2 border-dashed border-gray-300 rounded-md">
-                            <i class="fas fa-spinner fa-spin mr-2" aria-hidden="true"></i>Cargando formulario de donación...
-                         </p>
+
+                    <div class="flex justify-center mb-8">
+                        <div class="donaciones-widget-container relative inline-block text-left">
+                            <button id="howToHelpDonateTrigger" type="button" class="btn btn-accent btn-lg inline-flex items-center justify-center" aria-haspopup="true" aria-expanded="false">
+                                <span class="emoji-icon" role="img" aria-label="Corazón con lazo">💝</span>
+                                Donar con PayPal / Tarjeta
+                                <svg class="ml-2 -mr-0.5 h-5 w-5 text-gray-700" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                    <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.25 4.25a.75.75 0 01-1.06 0L5.23 8.29a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
+                                </svg>
+                            </button>
+                            <div id="howToHelpDonateDropdown" class="hidden origin-top-center sm:origin-top-right absolute left-1/2 -translate-x-1/2 sm:left-auto sm:-translate-x-0 sm:right-0 mt-2 w-64 rounded-md shadow-xl bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-30" role="menu" aria-orientation="vertical" aria-labelledby="howToHelpDonateTrigger" tabindex="-1">
+                                <div class="py-1" role="none">
+                                    <p class="px-4 py-2 text-xs text-gray-500">Elige tu método de donación:</p>
+                                    <a href="#" class="payment-option group flex items-center w-full px-4 py-3 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900" role="menuitem" tabindex="-1" data-payment-method="paypal">
+                                        <img src="https://www.paypalobjects.com/webstatic/mktg/Logo/pp-logo-100px.png" alt="PayPal" class="mr-3 h-6 w-auto object-contain">
+                                        Donar con PayPal
+                                    </a>
+                                    <a href="#" class="payment-option group flex items-center w-full px-4 py-3 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900" role="menuitem" tabindex="-1" data-payment-method="stripe">
+                                        <img src="https://stripe.com/img/v3/home/social.png" alt="Stripe" class="mr-3 h-6 w-auto object-contain p-0.5 border border-gray-200 rounded-sm">
+                                        Donar con Tarjeta (Stripe)
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                     <div id="mainDonationFormStatus" class="mt-4 text-center" aria-live="polite"></div>
-                    <div class="security-note">
-                        <i class="fa fa-lock" aria-hidden="true"></i> Tu información está protegida y segura (SSL 256-bits).
-                        <a href="/politica-privacidad" target="_blank" class="text-adara-success hover:underline">Política de Privacidad</a>
                     </div>
-                </div>
                  <div class="mt-16 reveal-on-scroll" style="--reveal-delay: 0.2s;">
                     <h3 class="text-2xl font-semibold text-adara-dark mb-8 text-center">Otras Formas de Ayudar</h3>
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 max-w-5xl mx-auto">
@@ -608,6 +683,31 @@
         </div>
     </div>
 
+    <div id="programPopup" class="popup program-popup" role="dialog" aria-modal="true" aria-labelledby="programPopupHeading" style="display: none;">
+        <div class="popup-content">
+            <button class="popup-close" onclick="closePopup('programPopup')" aria-label="Cerrar detalles del programa">×</button>
+            <div id="programPopupContentArea" class="space-y-4">
+                <h2 id="programPopupHeading" class="text-2xl sm:text-3xl font-bold text-adara-primary mb-4 text-center font-heading flex items-center justify-center">
+                    <span id="programPopupIcon" class="mr-3 text-3xl" aria-hidden="true"></span>
+                    <span id="programPopupTitle">Título del Programa</span>
+                </h2>
+                <p id="programPopupDescription" class="text-base text-gray-700 leading-relaxed"></p>
+                <div id="programPopupFeatures">
+                    <h3 class="text-lg font-semibold text-adara-dark mb-2 mt-4 font-heading">Características Clave:</h3>
+                    <ul id="programPopupFeaturesList" class="space-y-2">
+                        </ul>
+                </div>
+                <div id="programPopupDuration">
+                    <h3 class="text-lg font-semibold text-adara-dark mb-1 mt-4 font-heading">Duración:</h3>
+                    <p id="programPopupDurationText" class="text-sm text-gray-600"></p>
+                </div>
+                <div id="programPopupIdealFor">
+                     <h3 class="text-lg font-semibold text-adara-dark mb-1 mt-4 font-heading">Ideal para:</h3>
+                    <p id="programPopupIdealForText" class="text-sm text-gray-600"></p>
+                </div>
+            </div>
+        </div>
+    </div>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3.0.0/dist/chartjs-adapter-date-fns.bundle.min.js" defer></script>
 
