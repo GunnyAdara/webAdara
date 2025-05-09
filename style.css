@@ -216,7 +216,11 @@ h1, h2, h3, h4, h5, h6 {
 .gallery-scroll-container::-webkit-scrollbar { width: 8px; }
 .gallery-scroll-container::-webkit-scrollbar-track { background: #F8F9FA; border-radius: 10px; }
 .gallery-scroll-container::-webkit-scrollbar-thumb { background-color: #9CA3AF; border-radius: 10px; border-width: 2px; border-color: #F8F9FA; }
-.gallery-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr)); /* MODIFICADO: de 2 a 4 columnas */
+    gap: 1rem; /* Puedes ajustar esto si es necesario, por ejemplo a 0.5rem */
+}
 .gallery-grid img { border-radius: 0.375rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,.1), 0 2px 4px -2px rgba(0,0,0,.1); width: 100%; aspect-ratio: 1 / 1; object-fit: cover; cursor: pointer; transition-property: transform, box-shadow; transition-timing-function: ease-in-out; transition-duration: 300ms; }
 .gallery-grid img:hover { transform: scale(1.05); box-shadow: 0 10px 15px -3px rgba(0,0,0,.1), 0 4px 6px -4px rgba(0,0,0,.1); }
 #nosotros .md\:w-1\/2 article h3 { font-size: 1.5rem; line-height: 2rem; font-weight: 600; color: #0077B6; /* adara-primary */ margin-bottom: 0.5rem; }
@@ -654,3 +658,40 @@ button[type="submit"].is-loading { cursor: wait; opacity: 0.75; }
 #howToHelpDonateDropdown {
     z-index: 30; /* Puede ser menor si no hay conflicto de superposición */
 }
+
+/* === INICIO NUEVOS ESTILOS POPUP PROGRAMAS === */
+.program-popup .popup-content {
+    max-width: 48rem; /* max-w-3xl - Más ancho para contenido detallado */
+    /* Puedes ajustar padding si necesitas más espacio, ej: padding: 2rem 2.5rem; */
+}
+
+#programPopupContentArea .fa-fw {
+    width: 1.25em; /* Asegura alineación de iconos en listas */
+    text-align: center; /* Centra el icono dentro de su espacio */
+}
+
+#programPopupFeaturesList li {
+    padding-left: 0.5rem; /* Añade un poco de indentación */
+    line-height: 1.6; /* Mejora legibilidad de listas */
+}
+
+ #programPopupFeaturesList li span strong {
+     color: #333333; /* adara-dark para resaltar títulos en características */
+     font-weight: 600;
+ }
+
+#programPopupHeading {
+     margin-bottom: 1.5rem; /* Más espacio bajo el título */
+}
+
+ #programPopupDescription {
+     margin-bottom: 1.5rem; /* Espacio después de la descripción principal */
+ }
+
+/* Ocultar secciones si no tienen contenido (manejado por JS, pero por si acaso) */
+#programPopupFeatures:empty,
+#programPopupDuration:empty,
+#programPopupIdealFor:empty {
+    display: none;
+}
+/* === FIN NUEVOS ESTILOS POPUP PROGRAMAS === */
