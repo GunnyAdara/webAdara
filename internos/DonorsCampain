@@ -1,0 +1,742 @@
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+
+// Constantes de Colores y Estilos
+const adaraColors = {
+  verdeOlivaOscuro: '#4A5536',
+  verdeOlivaMedio: '#6B7A4C',
+  blancoAdara: '#FFFFFF',
+  grisClaroAdara: '#E2E8F0',
+  doradoAdara: '#D69E2E',
+  grisTextoAdara: '#4A5568',
+  azulAdara: '#3B82F6', 
+  amarilloEstrella: '#FBBF24', // Tailwind amber-400 for stars/sparkles
+};
+
+const STAIR_HEIGHT_CSS = 55;
+const HOMBRESITO_HEIGHT_CSS = 55; 
+const HOMBRESITO_WIDTH_CSS = 45;  
+const HEADER_HEIGHT_CSS = 60;
+
+// --- Componente Hombresito ---
+const Hombresito = ({ position, isVictory, showPowerUp }) => {
+  const hombresitoStyle = {
+    position: 'absolute',
+    width: `${HOMBRESITO_WIDTH_CSS}px`,
+    height: `${HOMBRESITO_HEIGHT_CSS}px`,
+    top: `${position.top}px`,
+    left: `${position.left}px`,
+    transition: 'top 0.7s cubic-bezier(0.68, -0.55, 0.27, 1.55), left 0.7s cubic-bezier(0.68, -0.55, 0.27, 1.55)',
+    zIndex: 20,
+    display: 'flex',
+    alignItems: 'flex-end',
+  };
+
+  const normalFigure = (
+    <svg viewBox="0 0 50 70" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
+      <circle cx="25" cy="15" r="10" fill={adaraColors.doradoAdara} />
+      <path d="M15 25 Q12 45 15 60 L35 60 Q38 45 35 25 Z" fill={adaraColors.azulAdara} />
+      <rect x="17" y="58" width="6" height="12" rx="2" fill={adaraColors.azulAdara} transform="rotate(-10 20 64)" />
+      <rect x="27" y="58" width="6" height="12" rx="2" fill={adaraColors.azulAdara} transform="rotate(5 30 64)" />
+    </svg>
+  );
+
+  const victoryFigure = (
+     <svg viewBox="0 0 60 70" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
+      <circle cx="30" cy="15" r="10" fill={adaraColors.doradoAdara} />
+      <path d="M20 25 Q17 45 20 60 L40 60 Q43 45 40 25 Z" fill={adaraColors.azulAdara} />
+      <rect x="22" y="58" width="7" height="12" rx="2" fill={adaraColors.azulAdara} />
+      <rect x="31" y="58" width="7" height="12" rx="2" fill={adaraColors.azulAdara} />
+      <path d="M20 30 Q10 20 5 25 L15 35 Q20 32 20 30 Z" fill={adaraColors.azulAdara} />
+      <path d="M40 30 Q50 20 55 25 L45 35 Q40 32 40 30 Z" fill={adaraColors.azulAdara} />
+    </svg>
+  );
+
+  const powerUpHalo = showPowerUp && (
+    <div 
+      className="absolute inset-[-5px] rounded-full animate-pulsePowerUp"
+      style={{ 
+        boxShadow: `0 0 15px 5px ${adaraColors.amarilloEstrella}`,
+        opacity: 0.7,
+      }}
+    />
+  );
+
+  return (
+    <div style={hombresitoStyle}>
+      {powerUpHalo}
+      {isVictory ? victoryFigure : normalFigure}
+    </div>
+  );
+};
+
+// --- Componente Escalón (Stair) ---
+const Stair = React.forwardRef(({ stepData, stepIndex, isActive, onClick, showSparkle }, ref) => {
+  const [isHovered, setIsHovered] = useState(false);
+
+  const perspectiveStyles = [
+    "w-full ml-0", "w-[90%] ml-[5%]", "w-[80%] ml-[10%]", "w-[70%] ml-[15%]",
+    "w-[60%] ml-[20%]", "w-[45%] ml-[27.5%]", "w-[30%] ml-[35%]",
+  ];
+  
+  const stairDynamicStyle = { 
+    backgroundColor: isHovered ? adaraColors.doradoAdara : (isActive ? adaraColors.verdeOlivaOscuro : adaraColors.grisClaroAdara),
+    color: isHovered ? adaraColors.blancoAdara : (isActive ? adaraColors.blancoAdara : adaraColors.grisTextoAdara),
+    transform: isHovered ? 'translateY(-4px) scale(1.02)' : 'translateY(0) scale(1)',
+  };
+
+  const iconNumberDynamicStyle = {
+    backgroundColor: isHovered || isActive ? adaraColors.blancoAdara : 'rgba(255,255,255,0.9)',
+    color: adaraColors.doradoAdara,
+  };
+
+  return (
+    <div
+      ref={ref}
+      className={`h-[${STAIR_HEIGHT_CSS}px] flex items-center justify-center p-3 text-sm cursor-pointer transition-all duration-300 relative mb-2 shadow-md rounded-t-lg rounded-b-md ${perspectiveStyles[stepIndex]}`}
+      onClick={() => onClick(stepIndex)}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      style={stairDynamicStyle}
+    >
+      {isActive && showSparkle && (
+        Array.from({ length: 5 }).map((_, i) => (
+          <div
+            key={`sparkle-${i}`}
+            className="absolute rounded-full animate-sparkle"
+            style={{
+              width: `${Math.random() * 6 + 3}px`,
+              height: `${Math.random() * 6 + 3}px`,
+              backgroundColor: adaraColors.amarilloEstrella,
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+              opacity: Math.random() * 0.5 + 0.3,
+              animationDelay: `${Math.random() * 1}s`,
+            }}
+          />
+        ))
+      )}
+      <span 
+        className={`mr-2 py-1 px-2 rounded font-bold transition-colors duration-300 ${isActive ? 'animate-pulseIcon' : ''}`}
+        style={iconNumberDynamicStyle}
+      >
+        {stepData.icon || stepData.number}
+      </span>
+      <span className="stair-text">{stepData.text}</span>
+      <div 
+        className="absolute top-full left-0 w-full h-[8px] rounded-b-sm"
+        style={{ backgroundColor: '#A0AEC0', boxShadow: 'inset 0 -2px 3px rgba(0,0,0,0.1)' }}
+      ></div>
+    </div>
+  );
+});
+
+// --- Componente Fuegos Artificiales ---
+const Fireworks = ({ isActive }) => {
+  const [renderParticles, setRenderParticles] = useState(false);
+
+  useEffect(() => {
+    if (isActive) {
+      setRenderParticles(true);
+      const timer = setTimeout(() => setRenderParticles(false), 7000); 
+      return () => clearTimeout(timer);
+    } else {
+      setRenderParticles(false);
+    }
+  }, [isActive]);
+
+  if (!renderParticles) return null;
+
+  const particles = Array.from({ length: 100 }).map((_, i) => { 
+    const angle = Math.random() * Math.PI * 2;
+    const distance = Math.random() * 250 + 100; 
+    const duration = 2.5 + Math.random() * 2.0; 
+    const delay = Math.random() * 2.5;      
+    const colors = [adaraColors.doradoAdara, adaraColors.verdeOlivaMedio, adaraColors.blancoAdara, '#FFD700', '#FF6347', adaraColors.azulAdara];
+    const color = colors[Math.floor(Math.random() * colors.length)];
+
+    const style = {
+      position: 'absolute',
+      left: `${48 + Math.random() * 4}%`, 
+      top: `${48 + Math.random() * 4}%`,  
+      width: `${Math.random() * 5 + 6}px`, 
+      height: `${Math.random() * 5 + 6}px`,
+      borderRadius: '50%',
+      backgroundColor: color,
+      animation: `explode ${duration}s ease-out ${delay}s forwards`,
+      '--tx': `${Math.cos(angle) * distance}px`,
+      '--ty': `${Math.sin(angle) * distance}px`,
+    };
+    return <div key={i} style={style} className="particle-firework"></div>;
+  });
+
+  return (
+    <div className="absolute inset-0 pointer-events-none z-[15] overflow-hidden"> 
+      <style>{`
+        @keyframes explode {
+          0% { transform: scale(1); opacity: 1; }
+          100% { transform: scale(3) translate(var(--tx), var(--ty)); opacity: 0; }
+        }
+      `}</style>
+      {particles}
+    </div>
+  );
+};
+
+// --- Componente Estrella Fugaz ---
+const ShootingStar = ({ id, initialTop, initialLeft, duration, delay }) => {
+  const starStyle = {
+    position: 'absolute',
+    top: `${initialTop}%`,
+    left: `${initialLeft}%`,
+    width: '2px',
+    height: '2px',
+    backgroundColor: adaraColors.amarilloEstrella,
+    borderRadius: '50%',
+    boxShadow: `0 0 10px 2px ${adaraColors.amarilloEstrella}`,
+    animation: `shootStar-${id} ${duration}s linear ${delay}s infinite`,
+    zIndex: 1, 
+    opacity: 0, 
+  };
+
+  const tailStyle = {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    width: '60px', 
+    height: '1px',
+    backgroundImage: `linear-gradient(to left, ${adaraColors.amarilloEstrella}, transparent)`,
+    transformOrigin: 'left center',
+    transform: 'translateY(-50%) translateX(-100%) rotate(var(--angle, -30deg))', 
+  };
+  
+  const keyframes = `
+    @keyframes shootStar-${id} {
+      0% { transform: translate(0, 0) scale(0.5); opacity: 0; --angle: ${Math.random() * -20 - 20}deg; }
+      10% { opacity: 1; transform: scale(1); }
+      90% { opacity: 1; }
+      100% { transform: translate(${Math.random() > 0.5 ? '-' : ''}${Math.random() * 300 + 200}px, ${Math.random() * 300 + 200}px) scale(0.5); opacity: 0; --angle: ${Math.random() * 20 + 20}deg; }
+    }
+  `;
+
+  return (
+    <>
+      <style>{keyframes}</style>
+      <div style={starStyle}>
+        <div style={tailStyle}></div>
+      </div>
+    </>
+  );
+};
+
+
+// --- Columna de la Escalera ---
+const StaircaseColumn = ({ stairsData, currentActiveStep, onStairClick, hombresitoPosition, isHombresitoVictory, childRefs }) => {
+  const staircaseWrapperRef = useRef(null);
+  
+  const columnStyle = {
+    backgroundImage: "url('https://imagizer.imageshack.com/img924/291/kfI15e.jpg')",
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+    backgroundRepeat: 'no-repeat',
+    minHeight: `calc(100vh - ${HEADER_HEIGHT_CSS}px)`,
+    overflow: 'hidden', 
+  };
+
+  return (
+    <section 
+      className="lg:w-2/5 w-full relative order-1 lg:order-1 p-6 flex flex-col justify-center"
+      style={columnStyle}
+    >
+      <ShootingStar id="s1" initialTop={10} initialLeft={80} duration={5} delay={0} />
+      <ShootingStar id="s2" initialTop={30} initialLeft={90} duration={7} delay={2.5} />
+      <ShootingStar id="s3" initialTop={5} initialLeft={20} duration={6} delay={4} />
+
+      <Fireworks isActive={isHombresitoVictory} />
+
+      <div 
+        ref={staircaseWrapperRef} 
+        className="relative w-full mx-auto py-10 z-10 flex flex-col justify-center"
+        style={{ maxWidth: '702px', padding: '2rem 1.5rem' }}
+      >
+        <div ref={childRefs.staircaseDivRef} id="staircase" className="flex flex-col-reverse relative">
+          {stairsData.map((stair, index) => (
+            <Stair
+              ref={childRefs.stairsRef.current[index]}
+              key={index}
+              stepData={stair}
+              stepIndex={index}
+              isActive={currentActiveStep === index}
+              onClick={onStairClick}
+              showSparkle={index >= stairsData.length - 2} 
+            />
+          ))}
+        </div>
+        <Hombresito 
+            position={hombresitoPosition} 
+            isVictory={isHombresitoVictory} 
+            showPowerUp={childRefs.showPowerUpEffect.current} 
+        />
+      </div>
+    </section>
+  );
+};
+
+
+// --- Área de Contenido ---
+const ContentStage = ({ stageData, isActive }) => {
+  if (!isActive) return null;
+  return (
+    <div className={`content-stage ${isActive ? 'block animate-fadeInContent' : 'hidden'}`}>
+      <h3 className="text-2xl font-bold mb-3 flex items-center" style={{ color: adaraColors.verdeOlivaAdaraMedio }}>
+        {stageData.icon && <span className="text-3xl mr-2">{stageData.icon}</span>}
+        {stageData.title}
+      </h3>
+      {stageData.intro && stageData.intro.map((p, i) => <p key={i} className="mb-4">{p}</p>)}
+      
+      {stageData.sections && stageData.sections.map((section, i) => (
+        <div key={i} className="mb-6"> 
+          <h4 className="text-xl font-semibold mt-4 mb-3 flex items-center" style={{ color: adaraColors.verdeOlivaOscuro }}>
+            {section.icon && <span className="text-2xl mr-2">{section.icon}</span>}
+            {section.title}
+          </h4>
+          {section.paragraphs && section.paragraphs.map((p, idx) => {
+            if (p.includes("somosadara.monday.com")) {
+              const parts = p.split("somosadara.monday.com");
+              return (
+                <p key={idx} className="mb-3 leading-relaxed">
+                  {parts[0]}
+                  <a href="https://somosadara.monday.com/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 underline">
+                    somosadara.monday.com
+                  </a>
+                  {parts[1]}
+                </p>
+              );
+            }
+            return <p key={idx} className="mb-3 leading-relaxed">{p}</p>;
+          })}
+          {section.list && (
+            <ul className="list-disc pl-6 space-y-2 mt-2">
+              {section.list.map((item, idx) => (
+                <li key={idx} className="flex items-start">
+                  {item.icon && <span className="text-xl mr-2 pt-1" style={{color: adaraColors.doradoAdara}}>{item.icon}</span>}
+                  {item.link ? (
+                    <a href={item.link} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 underline">
+                      {item.text}
+                    </a>
+                  ) : (
+                    item.text
+                  )}
+                </li>
+              ))}
+            </ul>
+          )}
+           {section.decisionTree && (
+            <div className="mt-3 p-4 border-l-4 rounded-r-md" style={{borderColor: adaraColors.doradoAdara, backgroundColor: adaraColors.grisClaroAdara + '60'}}>
+              {section.decisionTree.map((branch, bIdx) => (
+                <div key={bIdx} className="mb-4">
+                  <p className="font-semibold text-md mb-1">{branch.condition}</p>
+                  <ul className="list-disc pl-6 space-y-1">
+                    {branch.actions.map((action, aIdx) => (
+                      <li key={aIdx} className="text-sm leading-snug">{action}</li>
+                    ))}
+                  </ul>
+                  {branch.next && <p className="text-xs italic mt-2 text-gray-600">↪️ Próximo paso: {branch.next}</p>}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      ))}
+
+      {stageData.mission && (
+        <>
+          <h4 className="text-lg font-semibold mt-4 mb-1" style={{ color: adaraColors.verdeOlivaOscuro }}>🎯 Su Misión Aquí:</h4>
+          <p className="mb-3">{stageData.mission}</p>
+        </>
+      )}
+
+      {stageData.script && (
+         <>
+          <h4 className="text-lg font-semibold mt-4 mb-1" style={{ color: adaraColors.verdeOlivaOscuro }}>🗣️ {stageData.scriptTitle || "Guion Sugerido (¡Adáptenlo con su estilo!):"}</h4>
+          <div className="p-3 my-3 rounded border-l-4 italic" style={{backgroundColor: adaraColors.grisClaroAdara, borderColor: adaraColors.doradoAdara}}>
+            {typeof stageData.script === 'string' ? <p>{stageData.script}</p> : 
+              <ul className="list-disc pl-5 space-y-1">
+                {stageData.script.map((item, i) => <li key={i}>{item}</li>)}
+              </ul>
+            }
+          </div>
+        </>
+      )}
+
+      {stageData.metrics && (
+        <>
+          <h4 className="text-lg font-semibold mt-4 mb-1" style={{ color: adaraColors.verdeOlivaOscuro }}>📊 Métricas Clave de esta Etapa:</h4>
+          <ul className="space-y-2 mt-2">
+            {stageData.metrics.map((metric, i) => (
+              <li key={i} className="flex items-center">
+                <span className="mr-2 text-lg" style={{color: adaraColors.verdeOlivaMedio}}>{metric.icon}</span>
+                {metric.text}
+              </li>
+            ))}
+          </ul>
+        </>
+      )}
+       {stageData.rewards && (
+        <>
+          <h4 className="text-lg font-semibold mt-4 mb-1" style={{ color: adaraColors.verdeOlivaOscuro }}>💡 Ideas para que se Sientan Queridos y Sigan Apoyando:</h4>
+          <div className="p-4 mt-4 border rounded-md" style={{backgroundColor: '#FFFBEB', borderColor: adaraColors.doradoAdara}}>
+            <ul className="list-disc pl-5 space-y-1">
+                {stageData.rewards.map((idea, i) => <li key={i}>{idea}</li>)}
+            </ul>
+          </div>
+        </>
+      )}
+    </div>
+  );
+};
+
+const ContentDisplayArea = ({ stagesContent, currentActiveStep }) => {
+  return (
+    <section 
+      id="content-display-area" 
+      className="lg:w-3/5 w-full order-2 lg:order-2 shadow-lg overflow-y-auto p-6 bg-white"
+      style={{height: `calc(100vh - ${HEADER_HEIGHT_CSS}px)`}}
+    >
+      {stagesContent.map((stage, index) => (
+        <ContentStage
+          key={index}
+          stageData={stage}
+          isActive={currentActiveStep === index}
+        />
+      ))}
+    </section>
+  );
+};
+
+// --- Componente Principal App ---
+export default function App() {
+  const [currentActiveStep, setCurrentActiveStep] = useState(0);
+  const [hombresitoPosition, setHombresitoPosition] = useState({ top: 0, left: 0 });
+  const [isHombresitoVictory, setIsHombresitoVictory] = useState(false);
+  const showPowerUpEffect = useRef(false); 
+  const powerUpTimeoutRef = useRef(null);
+
+  const staircaseDivRef = useRef(null);
+  const stairsData = [ 
+    { dataStep: 0, icon: "🚀", text: "Punto de Partida" }, 
+    { dataStep: 1, number: "1", text: "Primer Contacto" }, // Este es el segundo escalón visualmente
+    { dataStep: 2, number: "2", text: "\"Calentando Motores\"" }, 
+    { dataStep: 3, number: "3", text: "Seguimiento y Reunión" },
+    { dataStep: 4, number: "4", text: "La Charla Clave" }, 
+    { dataStep: 5, number: "5", text: "¡Donativo y Gracias!" },
+    { dataStep: 6, icon: "🏆", text: "¡Familia Adara!" },
+  ];
+  const stairsRef = useRef(stairsData.map(() => React.createRef()));
+
+  const stagesContent = [
+    { // Etapa 0 - Punto de Partida
+      icon: "🚀", title: "Punto de Partida: ¡Equipo Adara, a la Conquista de Hoteles!",
+      intro: [
+        "¡Equipo! Bienvenidos a esta aventura épica donde transformaremos la generosidad hotelera en sonrisas y oportunidades para nuestros chicos de la Fundación Adara. ¡Prepárense para ser los héroes de esta campaña!"
+      ],
+      sections: [
+        { 
+          icon: "🎯",
+          title: "Nuestro Gran Objetivo: ¡Donaciones que Cambian Vidas!", 
+          paragraphs: [
+            "La meta principal de esta campaña es clara y poderosa: conseguir que los hoteles de la región se sumen como donantes recurrentes a Fundación Adara. Cada peso que logremos se traduce directamente en educación, deporte y un futuro más brillante para nuestros jóvenes."
+          ] 
+        },
+        { 
+          icon: "🛠️",
+          title: "Herramientas para el Éxito:", 
+          paragraphs: [
+            "¡No están solos en esto! Cuentan con:",
+          ],
+          list: [
+            {text: "Una Base de Datos: Con información de contacto de hoteles (obtenida mediante scraping de Google Maps y directorios). ¡Son nuestras primeras pistas!", icon: "📊"},
+            {text: "Material Informativo Atractivo: Presentaciones, videos cortos e historias de impacto para enamorar a los posibles donantes.", icon: "📄"},
+            {text: "Esta Página Interactiva: Su guía paso a paso, ¡su mapa del tesoro!", icon: "📱"},
+            {text: "Capacitación Constante y Apoyo del Equipo Adara: ¡Estamos para ayudarlos a brillar!", icon: "🫂"}
+          ]
+        },
+        {
+          icon: "🗺️",
+          title: "Nuestra Misión: ¡Convertir Contactos en Corazones Solidarios!",
+          paragraphs: [
+            "Su misión, si deciden aceptarla (¡y sabemos que sí! 😉), es tomar esos contactos 'fríos' de nuestra base de datos y, escalón por escalón, convertirlos en parte activa de la Familia Adara. Se trata de construir relaciones, mostrar el impacto real de la fundación y despertar la generosidad que sabemos que existe en nuestra comunidad hotelera."
+          ]
+        },
+        {
+          icon: "💰",
+          title: "¡El Esfuerzo Tiene su Recompensa!",
+          paragraphs: [
+            "Sabemos que este es un laburo que requiere garra y corazón, ¡y queremos que se sientan motivados! Por eso:",
+          ],
+          list: [
+            {text: "Premio Individual: Si conseguís una donación vos solito, ¡te llevás el 10% del monto total donado por el hotel como premio! ¡Un golazo de media cancha!", icon: "🏆"},
+            {text: "Premio por Colaboración: Si para cerrar una donación se necesita el apoyo de otros miembros del equipo o de la fundación, ¡te llevás un jugoso 2% del total donado por ese hotel! ¡El trabajo en equipo también paga!", icon: "🤝"}
+          ]
+        }
+      ],
+    },
+    { // Etapa 1 - Corresponde al segundo escalón "Primer Contacto"
+        icon: "📞", title: "Etapa 1: Primer Contacto", // Título corregido y asegurado
+        mission: "Romper el hielo, presentar MUY brevemente a Adara y conseguir el SÍ para enviar más info por email o WhatsApp. ¡Energía y simpatía al máximo!",
+        script: "¡Hola [Nombre del Contacto]! Soy [Tu Nombre] de Fundación Adara. ¿Te agarro en un buen momento? Solo un minutito. 😊 En Adara transformamos vidas de niños y jóvenes a través de la educación y el deporte. ¿Te sonaría interesante recibir un email cortito con más detalles de cómo generamos un impacto real? ¡Sin compromiso!",
+        metrics: [ {icon: "📈", text: "Nº de llamadas/mensajes realizados."}, {icon: "👍", text: "% de contactos que aceptan recibir info."}, {icon: "📧", text: "Emails/WhatsApps válidos conseguidos."} ]
+    },
+    { // Etapa 2 - Corresponde al tercer escalón "Calentando Motores"
+        icon: "�", title: "Etapa 2: \"Calentando Motores\" - ¡Preparamos el Terreno!",
+        intro: [
+            "¡Muy bien, equipo! Ya sabemos a dónde vamos. Ahora, antes de salir a la cancha, tenemos que preparar nuestras herramientas y nuestra estrategia. Este escalón es CLAVE para que el primer contacto sea un éxito y no un 'fulbito para la tribuna'."
+        ],
+        sections: [
+            {
+                icon: "📧",
+                title: "Paso 1: Tu Identidad Digital Adara",
+                paragraphs: [
+                    "Lo primero es lo primero: ¡profesionalismo ante todo! Cada uno de ustedes tendrá su propio correo electrónico institucional.",
+                    "Formato: `tunombre@somosadara.org`",
+                    "Esto nos da una imagen seria y confiable frente a los hoteles. ¡Usalo para toda comunicación oficial de la campaña!"
+                ],
+            },
+            {
+                icon: "📊",
+                title: "Paso 2: ¡Bienvenido a Monday.com, Nuestro Centro de Operaciones!",
+                paragraphs: [
+                    "Serán invitados a nuestro sistema de gestión (ERP) en Monday.com. La dirección para acceder es: somosadara.monday.com.", 
+                    "Aquí llevaremos el registro y seguimiento de cada contacto (lead), las interacciones, los próximos pasos, ¡TODO! Es fundamental que actualicen la info acá para que estemos todos en la misma página y no se nos escape ningún detalle."
+                ]
+            },
+            {
+                icon: "🕵️",
+                title: "Paso 3: Investigación Previa - ¡Conocé a tu 'Cliente'!",
+                paragraphs: [
+                    "Antes de levantar el teléfono o mandar un mail, ¡hay que hacer la tarea! No podemos ir a ciegas. Investigar un poquito sobre cada hotel nos dará una ventaja enorme. ¿Qué buscamos?",
+                ],
+                list: [
+                    {text:"Tipo de Hotel: ¿Es un hotel boutique, de cadena, familiar, de lujo, enfocado en negocios, en turismo ecológico?"},
+                    {text:"Valores o Misión (si la tienen pública): ¿Mencionan algo sobre responsabilidad social, apoyo a la comunidad, sostenibilidad? ¡Esto puede ser un excelente punto de conexión!"},
+                    {text:"Noticias Recientes o Eventos: ¿Han ganado algún premio? ¿Están promocionando algo nuevo? ¿Participan en eventos locales?"},
+                    {text:"Nombre del Gerente General o de Marketing/RSE: Si podemos dirigirnos a una persona específica, ¡mucho mejor! LinkedIn puede ser tu aliado acá."},
+                    {text:"¿Tienen programas de donación o apoyo a causas visibles? Si ya lo hacen, ¡genial! Si no, ¡es nuestra oportunidad!"}
+                ],
+                paragraphs_after_list: [ 
+                    "Tener esta info a mano te permitirá personalizar tu mensaje y demostrar que no sos un improvisado."
+                ]
+            },
+            {
+                icon: "📂",
+                title: "Paso 4: Prepará tu 'Kit de Conquista'",
+                paragraphs: [
+                    "Asegurate de tener a mano y bien organizado todo el material que te dimos:",
+                ],
+                list: [ 
+                    {icon: "📄", text: "PDF de presentación Fundación Adara (versión hoteles)", link: "#"}, 
+                    {icon: "🎬", text: "Video corto de impacto Adara", link: "#"}, 
+                    {icon: "🌟", text: "Historias de éxito de nuestros chicos", link: "#"}, 
+                    {icon: "📜", text: "Comprobante de Donataria Autorizada", link: "#"}, 
+                    {icon: "🌐", text: "Página web de Fundación Adara", link: "https://somosadara.org/"},
+                    {icon: "❓", text: "Respuestas a preguntas frecuentes (las iremos construyendo juntos)"},
+                    {icon: "😄", text: "¡Y tu mejor sonrisa y energía positiva!"}
+                ]
+            },
+            {
+                icon: "🌳",
+                title: "Paso 5: El Primer Contacto Telefónico - Árbol de Posibilidades",
+                paragraphs: [
+                    "¡Llegó el momento de la verdad! Tranqui, acá te dejamos una guía. Recordá que esto es una base, ¡adaptala con tu estilo y la info que investigaste!",
+                    "Objetivo Principal de esta llamada: Conseguir el SÍ para enviar más información y, si es posible, el nombre y correo de la persona indicada para hablar de estos temas."
+                ],
+                decisionTree: [
+                    {
+                        condition: "📞 LLAMÁS AL HOTEL...",
+                        actions: ["Presentate con tu nombre y de Fundación Adara."],
+                        next: "Hablar con la recepcionista/operadora."
+                    },
+                    {
+                        condition: "🗣️ LA RECEPCIONISTA/OPERADORA ATIENDE:",
+                        actions: [
+                            "Vos: \"¡Hola! Soy [Tu Nombre] de Fundación Adara. ¿Cómo estás? Quería saber con quién podría hablar sobre posibles colaboraciones o programas de apoyo a la comunidad que realiza el hotel.\"",
+                        ],
+                    },
+                    {
+                        condition: "↪️ SI TE PREGUNTA '¿De qué se trata?' O '¿Para qué es?':",
+                        actions: [
+                             "Vos: \"¡Claro! En Fundación Adara ayudamos a jóvenes de la zona a través de la educación y el deporte. Creemos que los hoteles como el suyo, que son un pilar en la comunidad, podrían estar interesados en conocer cómo juntos podemos generar un impacto muy positivo. Busco a la persona encargada de estas iniciativas o al Gerente General.\""
+                        ],
+                    },
+                    {
+                        condition: "↪️ SI TE PASAN CON ALGUIEN (Gerente, Marketing, RSE):",
+                        actions: [
+                            "Vos: \"¡Hola [Nombre de la Persona], gracias por tomar mi llamada! Soy [Tu Nombre] de Fundación Adara. ¿Te agarro en un buen momento? Solo un minutito.\"",
+                            "(Esperar respuesta)",
+                            "Vos (si dice SÍ): \"Genial. En Adara transformamos vidas de niños y jóvenes aquí en [Mencionar zona/Cancún] a través de la educación y el deporte. Vi que [Mencionar algo que investigaste del hotel, ej: 'su hotel tiene un fuerte compromiso con la comunidad' o 'están muy enfocados en X']. Me encantaría enviarte un correo muy breve con más detalles de cómo generamos un impacto real y cómo podríamos colaborar. ¿Te parecería bien? ¿A qué correo te lo puedo mandar?\"",
+                            "(Si te da el correo): ¡Excelente! Anotalo bien. \"Perfecto, [Nombre], te lo envío en un ratito. ¡Muchas gracias por tu tiempo!\"",
+                            "(Si pregunta más antes de dar el correo): Respondé brevemente y volvé a pedir el correo para enviar info detallada. \"Entiendo tu pregunta. Justamente en el material que te quiero enviar explicamos eso en detalle. ¿Me pasarías tu correo así lo ves con calma?\""
+                        ],
+                        next: "Registrar todo en Monday.com y enviar email (Escalón siguiente)."
+                    },
+                    {
+                        condition: "↪️ SI TE DICEN QUE LA PERSONA NO ESTÁ / ESTÁ OCUPADA:",
+                        actions: [
+                            "Vos: \"Entiendo, no hay problema. ¿Me podrías decir cuál es el mejor momento para volver a llamar o cuál es su correo electrónico para enviarle la información directamente?\"",
+                            "(Si te dan horario): Agradecé y agendá.",
+                            "(Si te dan correo): Agradecé y preparate para enviar el mail.",
+                            "(Si no te dan nada): \"Bueno, muchas gracias igual por tu tiempo. Intentaré más tarde. ¡Que tengas un buen día!\" (Y registrá el intento en Monday)."
+                        ],
+                        next: "Registrar en Monday.com. Volver a intentar o enviar email genérico si se consiguió."
+                    },
+                    {
+                        condition: "↪️ SI TE DICEN 'NO NOS INTERESA' / 'NO HACEMOS DONACIONES' (de forma tajante):",
+                        actions: [
+                            "Vos: \"Comprendo perfectamente. Agradezco mucho tu honestidad y tu tiempo. ¡Que tengas un excelente día!\"",
+                            "(¡No te desanimes! Anotá el resultado en Monday y pasá al siguiente hotel. ¡No todas las puertas se abren a la primera!)"
+                        ],
+                        next: "Registrar en Monday.com. ¡A seguir con el próximo!"
+                    }
+                ]
+            }
+        ],
+        metrics: [ 
+            {icon: "✅", text: "Correos institucionales creados y funcionando."},
+            {icon: "💻", text: "Acceso y comprensión básica de Monday.com para seguimiento de leads."},
+            {icon: "🔍", text: "Nº de hoteles investigados antes del contacto."},
+            {icon: "📞", text: "Nº de primeros contactos telefónicos realizados."},
+            {icon: "📧", text: "Nº de correos de presentación enviados con éxito."}
+        ]
+    },
+    { 
+        icon: "🗓️", title: "Etapa 3: Seguimiento y Reunión",
+        mission: "No dejar que se enfríe. Llamar para ver si vieron la info y, ¡lo más importante!, agendar una mini-reunión (virtual o presencial corta).",
+        scriptTitle: "Guion Sugerido (¡Con calidez!):",
+        script: "¡Hola [Nombre]! ¿Cómo estás? Soy [Tu Nombre] de Adara otra vez. ¿Tuviste chance de echarle un ojo a lo que te mandé? Me encantaría contarte un poquito más y escuchar tus ideas. ¿Te vendrían bien 15 minutitos para una charla rápida esta semana?",
+        metrics: [ {icon: "🔄", text: "Nº de seguimientos realizados."}, {icon: "🤝", text: "Nº de reuniones agendadas."}, {icon: "⏱️", text: "Tiempo promedio para agendar."} ]
+    },
+    { 
+        icon: "💬", title: "Etapa 4: La Charla Clave",
+        mission: "¡El momento de brillar! Conectar emocionalmente, mostrar el impacto directo de Adara y resolver dudas. ¡Escucha activa y pasión!",
+        scriptTitle: "Puntos Clave para la Charla (¡No un monólogo!):",
+        script: [ "Gracias por tu tiempo. ¿Qué fue lo que más te llamó la atención de Adara? (Escuchar primero).", "Contar UNA historia de impacto REAL y conmovedora (breve).", "Explicar cómo su posible donación se traduce en ayuda CONCRETA (ej: \"Con X monto, un niño recibe Y\").", "Preguntar: \"¿Hay algo que te gustaría saber más a fondo o alguna duda que tengas?\"", "Si el ambiente es bueno: \"¿Te gustaría sumarte a nuestra familia de donantes y ayudarnos a seguir cambiando vidas?\"" ],
+        metrics: [ {icon: "🗣️", text: "Nº de reuniones realizadas."}, {icon: "🎯", text: "Compromisos verbales de donación."}, {icon: "💡", text: "Interés mostrado (calificación subjetiva)."} ]
+    },
+    { 
+        icon: "🎁", title: "Etapa 5: ¡Donativo y Gracias!",
+        mission: "Facilitar el proceso de donación (link directo, datos claros) y agradecer DE CORAZÓN. ¡Hacerlos sentir héroes!",
+        scriptTitle: "Guion Post-Donación (¡Inmediato!):",
+        script: "¡[Nombre], MIL GRACIAS! Tu generosidad nos emociona y nos impulsa. Acabás de hacer una diferencia real. ¡Bienvenido/a a la Familia Adara! Pronto recibirás noticias de cómo tu aporte se pone en acción.",
+        metrics: [ {icon: "💳", text: "Nº de donaciones concretadas."}, {icon: "💰", text: "Monto promedio de donación."}, {icon: "✅", text: "Tasa de conversión (de reunión a donante)."} ]
+    },
+    { 
+        icon: "🏆", title: "Etapa 6: ¡Familia Adara! (Donante Recurrente)",
+        mission: "¡Celebrar! Y más importante: cultivar la relación para que ese donante se quede, se sienta parte y, quién sabe, ¡traiga más gente!",
+        rewards: [ "Newsletter mensual EXCLUSIVA para donantes con historias de impacto directo.", "Invitaciones a eventos especiales de Adara (virtuales o presenciales).", "Menciones (con permiso) en redes o web como \"Héroes Adara\".", "Pequeños detalles simbólicos (un dibujo de un niño, un video de agradecimiento personalizado).", "Encuestas de satisfacción: \"¿Cómo podemos mejorar nuestra comunicación contigo?\"." ],
+        metrics: [ {icon: "💖", text: "Tasa de retención de donantes."}, {icon: "👍", text: "Feedback positivo de los donantes."}, {icon: "➕", text: "Nuevos donantes referidos por existentes."} ]
+    }
+  ];
+
+  const handleStairClick = (index) => {
+    setCurrentActiveStep(index);
+    setIsHombresitoVictory(index === stairsData.length - 1);
+    showPowerUpEffect.current = true;
+    if (powerUpTimeoutRef.current) clearTimeout(powerUpTimeoutRef.current);
+    powerUpTimeoutRef.current = setTimeout(() => {
+      showPowerUpEffect.current = false;
+      setHombresitoPosition(prev => ({...prev})); 
+    }, 700); 
+  };
+  
+  const updateHombresitoPositionCallback = useCallback(() => {
+    const activeStairRef = stairsRef.current[currentActiveStep];
+    if (activeStairRef && activeStairRef.current && staircaseDivRef.current) {
+        const activeStairElement = activeStairRef.current;
+        const staircaseDivElement = staircaseDivRef.current;
+        
+        const topPos = staircaseDivElement.offsetTop + activeStairElement.offsetTop - HOMBRESITO_HEIGHT_CSS + (STAIR_HEIGHT_CSS - HOMBRESITO_HEIGHT_CSS)/2 + 10 ; 
+        
+        let leftPos;
+        if (currentActiveStep === stairsData.length - 1) {
+            leftPos = staircaseDivElement.offsetLeft + activeStairElement.offsetLeft + (activeStairElement.offsetWidth / 2) - (HOMBRESITO_WIDTH_CSS / 2);
+        } else {
+            leftPos = staircaseDivElement.offsetLeft + activeStairElement.offsetLeft - HOMBRESITO_WIDTH_CSS - 10;
+        }
+        setHombresitoPosition({ top: topPos, left: Math.max(0, leftPos) });
+    }
+  }, [currentActiveStep, stairsData.length]);
+
+  useEffect(() => {
+    updateHombresitoPositionCallback();
+    window.addEventListener('resize', updateHombresitoPositionCallback);
+    return () => {
+        window.removeEventListener('resize', updateHombresitoPositionCallback);
+        if (powerUpTimeoutRef.current) clearTimeout(powerUpTimeoutRef.current);
+    };
+  }, [currentActiveStep, updateHombresitoPositionCallback]);
+
+  return (
+    <div className="font-montserrat bg-gray-100">
+      <style>{`
+        body { margin: 0; font-family: 'Montserrat', sans-serif; }
+        .animate-fadeInContent { animation: fadeInContent 0.5s ease-out forwards; }
+        @keyframes fadeInContent {
+          from { opacity: 0; transform: translateY(10px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-pulseIcon { animation: pulseIcon 1.5s infinite ease-in-out; }
+        @keyframes pulseIcon {
+          0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.4); }
+          50% { transform: scale(1.1); box-shadow: 0 0 10px 5px rgba(251, 191, 36, 0.1); }
+        }
+        .animate-pulsePowerUp { animation: pulsePowerUp 0.7s ease-out; }
+        @keyframes pulsePowerUp {
+          0% { opacity: 0.7; transform: scale(1); }
+          50% { opacity: 1; transform: scale(1.2); }
+          100% { opacity: 0; transform: scale(1.5); }
+        }
+        .animate-sparkle {
+            animation-name: sparkleAnim;
+            animation-duration: 1.5s;
+            animation-iteration-count: infinite;
+            animation-timing-function: ease-in-out;
+        }
+        @keyframes sparkleAnim {
+            0%, 100% { opacity: 0.3; transform: scale(0.8); }
+            50% { opacity: 0.8; transform: scale(1.2); }
+        }
+      `}</style>
+
+      <header 
+        className="flex items-center justify-between shadow-md px-4 py-2 sticky top-0 z-[100]"
+        style={{ backgroundColor: adaraColors.verdeOlivaOscuro, color: adaraColors.blancoAdara, height: `${HEADER_HEIGHT_CSS}px`}}
+      >
+        <img 
+          src="https://imagizer.imageshack.com/img923/4317/d6xZtp.png" 
+          alt="Logo Fundación Adara" 
+          style={{ maxHeight: '35px' }}
+          onError={(e) => { e.target.onerror = null; e.target.src = `https://placehold.co/100x35/${adaraColors.verdeOlivaOscuro.substring(1)}/FFFFFF?text=Adara`; e.target.alt='Logo Adara (fallback)';}}
+        />
+        <h1 className="font-bold text-xl sm:text-2xl">Escalera al Éxito: Campaña Adara</h1>
+        <div />
+      </header>
+
+      <main className="min-h-[calc(100vh-var(--header-height))]">
+        <div className="flex flex-col lg:flex-row">
+          <StaircaseColumn
+            stairsData={stairsData}
+            currentActiveStep={currentActiveStep}
+            onStairClick={handleStairClick}
+            hombresitoPosition={hombresitoPosition}
+            isHombresitoVictory={isHombresitoVictory}
+            childRefs={{ stairsRef, staircaseDivRef, showPowerUpEffect }}
+          />
+          <ContentDisplayArea
+            stagesContent={stagesContent}
+            currentActiveStep={currentActiveStep}
+          />
+        </div>
+      </main>
+    </div>
+  );
+}
+�
